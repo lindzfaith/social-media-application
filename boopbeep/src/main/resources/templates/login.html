@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>Login to Beep Boop</title>
+		<style>
+			body,html {
+				font-family: 'Oswald', sans-serif;
+				padding: 0px;
+				margin: 0;
+			}
+			.row {
+				display: flex;
+				min-height: 800px;
+			}
+			.column-one {
+				width: 30%;
+				float: left;
+			}
+			.column-two {
+				width: 70%;
+				float: left;
+				background-image: linear-gradient(to right, #86BBD8, #BEE8FF);
+				box-shadow: 0px 0px 5px black;
+			}
+			.login-header {
+				text-align: center;
+				font-size: 70px;
+				text-shadow: 2px 2px 2px white;
+			}
+			.sign-up-text {
+				color: rgb(255, 254, 253);
+				text-shadow: 1px 1px 3px rgb(255, 255, 255);
+				text-align: center;
+				margin-bottom: 0px;
+				margin-top: 20px;
+				padding: 0;
+				font-size: 45px;
+				font-weight: 700;
+				animation: 20s infinite color-animation;
+			}
+			.sub {
+				color: black;
+				text-shadow: 2px 2px 4px white;
+				text-align: center;
+				font-size: 80px;
+				margin-top: 40px;
+				margin-bottom: 5px;
+			}
+			.login-container {
+				border-radius: 25px;
+				margin: 15%;
+				box-shadow: 1px 1px 3px 3px black;
+				height: 500px;
+			}
+			.sign-up-container {
+				border-radius: 50px;
+				background-image: linear-gradient(to right, white, rgb(246, 248, 248));;
+				margin: 100px;
+				margin-top: 20px;
+				box-shadow: 1px 1px 3px 3px black;
+				min-height: 500px;
+				padding-bottom: 25px;
+				border: 2px solid #33658A;
+				
+			}
+			label {
+    			display: inline-block;
+    			text-align: right;
+    			font-size: 20px;
+    			margin-bottom: 5px;
+			}
+			input {
+  				display: inline-block;
+  				width: 50%;
+  				font-size: 30px;
+  				margin-bottom: 10px;
+  				border: none;
+  				box-shadow: 1px 1px 5px black;
+			}
+			.login-button {
+				width: 50%;
+				background-image: linear-gradient(to right, rgb(180, 236, 247), rgb(118, 185, 238));;
+				min-height: 10%;
+				font-size: 20px;
+				border-radius: 25px;
+				margin-top: 10px;
+				padding-top: 2%;
+				padding-bottom: 2%;
+			}
+			.login-button:hover {
+				font-weight: 700;
+				cursor: pointer;
+			}
+			.sign-up-button {
+				width: 50%;
+				background-image: linear-gradient(to right, rgb(252, 255, 255), rgb(243, 235, 247));;
+				min-height: 10%;
+				font-size: 20px;
+				border-radius: 25px;
+				margin-top: 10px;
+				padding-top: 2%;
+				padding-bottom: 2%;
+			}
+			.sign-up-button:hover {
+				font-weight: 800;
+				cursor: pointer;
+			}
+			@keyframes color-animation {
+  				0%    {color: rgb(0, 0, 0); transform: skewX(-5deg)}
+  				25%   {color: rgb(17, 24, 33); transform: skewX(5deg);}
+  				75%   {color: rgb(9, 13, 17); transform: skewX(-5deg);}
+  				100%   {color: rgb(0, 0, 0); transform: skewX(5deg)}
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+		<script th::inline="javascript">
+			
+			var app = angular.module("signUpApp", []);
+			
+			app.controller("signUpApp", function($scope, $http) {
+				$scope.user = {};
+				$scope.user.username = "";
+				$scope.user.firstName = "";
+				$scope.user.lastName = "";
+				$scope.user.password = "";
+				$scope.repeatPassword = "";
+				$scope.error = "";
+			
+			$scope.createUser = function() {
+				// Error checking passwords
+				if ($scope.repeatPassword != $scope.user.password) {
+					$scope.error = "Passwords do not match!";
+				// Making sure all fields are filled in
+				} else if ($scope.user.username == "" || $scope.user.firstName == ""
+					|| $scope.lastName == "" || $scope.password || $scope.repeatPassword == "") {
+					$scope.error = "Fill out all fields!"
+				} else {
+					$http.post("/beepboop/users", $scope.user).then(
+						function(response) {
+							
+						}, function(rejection) {
+							
+						}
+						
+					)
+				}
+				
+			}
+			
+			});
+		</script>
+		<div class="row">
+			<div class="column-one">
+				<div class="login-container">
+					<h1 style="margin-bottom: 0px" class="login-header">Login to Beep Boop</h1>
+					<form style="text-align: center;"> 
+						<label>Username: </label>
+						<br>
+						<input name="username" type="text">
+						<br>
+						<label>Password: </label>
+						<br>
+						<input name="password" type="password">
+						<br>
+						<p th:if="${loginError}" style="color: red" class="error">Incorrect username or password</p>
+						<button class="login-button">Login</button>
+					</form>
+				</div>
+			</div>
+			<div class="column-two">
+				<h2 class="sub">Sign Up Now!</h2>
+					<form style="text-align: center;"> 
+						<label>First Name: </label>
+						<br>
+						<input ng-model="user.firstName" id="first-name" name="text" type="password">
+						<br>
+						<label>Last Name: </label>
+						<br>
+						<input ng-model="user.lastName" id="first-name" name="text" type="password">
+						<br>
+						<label>Username: </label>
+						<br>
+						<input ng-model="user.username" id="username" name="username" type="text">
+						<br>
+						<label>Password: </label>
+						<br>
+						<input ng-model="user.password" id="password" name="password" type="password">
+						<br>
+						<label>Repeat Password: </label>
+						<br>
+						<input ng-model="repeatPassword" id="repeat-password" name="password" type="password">
+						<br>
+						<button class="sign-up-button">Sign Up</button>
+						<label>{{error}}</label>
+					</form>
+			</div>
+		</div>
+	</body>
+</html>
