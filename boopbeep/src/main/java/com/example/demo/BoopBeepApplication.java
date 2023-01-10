@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EnableJpaRepositories
-@SpringBootApplication
+@SpringBootApplication ( scanBasePackages = { "com.example.demo" } )
 public class BoopBeepApplication {
 
 	public static void main(String[] args) {

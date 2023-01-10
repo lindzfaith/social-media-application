@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:tiles="http://www.thymeleaf.org">
 	<head>
 		<title>Login to Beep Boop</title>
 		<style>
@@ -114,12 +115,12 @@
 		</style>
 	</head>
 	<body>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 		<script th::inline="javascript">
 			
 			var app = angular.module("signUpApp", []);
 			
-			app.controller("signUpApp", function($scope, $http) {
+			app.controller("signUpCtrl", function($scope, $http) {
 				$scope.user = {};
 				$scope.user.username = "";
 				$scope.user.firstName = "";
@@ -134,38 +135,46 @@
 					$scope.error = "Passwords do not match!";
 				// Making sure all fields are filled in
 				} else if ($scope.user.username == "" || $scope.user.firstName == ""
-					|| $scope.lastName == "" || $scope.password || $scope.repeatPassword == "") {
+					|| $scope.user.lastName == "" || $scope.user.password == "" 
+						|| $scope.repeatPassword == "") {
 					$scope.error = "Fill out all fields!"
 				} else {
-					$http.post("/beepboop/users", $scope.user).then(
-						function(response) {
-							
+					$http.post("/beepboop/users", $scope.user).then(function(response) {
+							document.getElementById('sign-username').value = '';
+							document.getElementById('first-name').value = '';
+							document.getElementById('sign-password').value = '';
+							document.getElementById('repeat-password').value = '';
+							document.getElementById('last-name').value = '';
+							$scope.error = "Successfully signed up!";
 						}, function(rejection) {
-							
-						}
-						
-					)
+							$scope.error = "User with that username already exists!";
+					});
 				}
-				
 			}
 			
 			});
 		</script>
-		<div class="row">
+		<div ng-app="signUpApp" ng-controller="signUpCtrl" class="row">
 			<div class="column-one">
 				<div class="login-container">
 					<h1 style="margin-bottom: 0px" class="login-header">Login to Beep Boop</h1>
-					<form style="text-align: center;"> 
-						<label>Username: </label>
-						<br>
-						<input name="username" type="text">
-						<br>
-						<label>Password: </label>
-						<br>
-						<input name="password" type="password">
-						<br>
-						<p th:if="${loginError}" style="color: red" class="error">Incorrect username or password</p>
-						<button class="login-button">Login</button>
+					<form th:action="@{/login}" name="f" method="post" style="text-align: center">
+						<fieldset style="border: none">
+							<div class="form-group">
+								<label>Username: </label>
+								<br>
+								<input id="username" name="username" class="form-control" type="text">
+							</div>
+							<div class="form-group">
+								<label>Password: </label>
+								<br>
+								<input id="password" name="password" class="form-control" type="password">
+							</div>
+							<div th:if="${param.error}" style="color: red">    
+    							Invalid username or password.
+							</div>
+							<button name="submit" type="submit" class="login-button">Login</button>
+						</fieldset> 
 					</form>
 				</div>
 			</div>
@@ -174,26 +183,27 @@
 					<form style="text-align: center;"> 
 						<label>First Name: </label>
 						<br>
-						<input ng-model="user.firstName" id="first-name" name="text" type="password">
+						<input ng-model="user.firstName" id="first-name" name="first-name" type="text">
 						<br>
 						<label>Last Name: </label>
 						<br>
-						<input ng-model="user.lastName" id="first-name" name="text" type="password">
+						<input ng-model="user.lastName" id="last-name" name="last-name" type="text">
 						<br>
 						<label>Username: </label>
 						<br>
-						<input ng-model="user.username" id="username" name="username" type="text">
+						<input ng-model="user.username" id="sign-username" name="username" type="text">
 						<br>
 						<label>Password: </label>
 						<br>
-						<input ng-model="user.password" id="password" name="password" type="password">
+						<input ng-model="user.password" id="sign-password" name="password" type="password">
 						<br>
 						<label>Repeat Password: </label>
 						<br>
 						<input ng-model="repeatPassword" id="repeat-password" name="password" type="password">
 						<br>
-						<button class="sign-up-button">Sign Up</button>
-						<label>{{error}}</label>
+						<button ng-click="createUser()" class="sign-up-button">Sign Up</button>
+						<br>
+						<p>{{error}}</p>
 					</form>
 			</div>
 		</div>
