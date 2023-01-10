@@ -16,8 +16,7 @@ import javax.persistence.OneToOne;
 public class Thread extends Model {
 	
 	@Id
-	@GeneratedValue
-	Long id;
+	String id;
 	
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	Post original;
@@ -31,12 +30,18 @@ public class Thread extends Model {
 	}
 	
 	public Thread(Post post) {
-		original = post;
 		replies = new ArrayList<Post>();
+		id = post.getId() + "1";
+		post.setThreadId(id);
+		original = post;
 	}
 	
 	public void addReply(Post post) {
 		replies.add(post);
+	}
+	
+	public Post getPost() {
+		return original;
 	}
 
 }

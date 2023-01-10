@@ -12,6 +12,8 @@ public class Post extends Model {
 	@Id
 	String id;
 	
+	String threadId;
+	
 	public String getId() {
 		return id;
 	}
@@ -74,11 +76,20 @@ public class Post extends Model {
 		likes = new ArrayList<String>();
 	}
 	
-	public Post(String user, LocalDateTime date) {
+	public Post(String user, String content, LocalDateTime date) {
+		this.content = content;
 		likes = new ArrayList<String>();
 		this.author = user;
 		this.time = date;
 		id = this.author + "-" + time.toString();
+	}
+	
+	public void setThreadId(String id) {
+		this.threadId = id;
+	}
+	
+	public String getThreadId() {
+		return threadId;
 	}
 
 }
