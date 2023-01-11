@@ -163,18 +163,14 @@
 			$scope.getPosts = function() {
 				$http.get("/beepboop/posts").then(function(response) {
 					$scope.posts = response.data;
-					console.log($scope.posts[0]);
 				}, function(rejection) {
-					console.log(rejection.data);
 				});
 			}
 			
 			$scope.getCurrentUser = function() {
 				$http.get("/beepboop/user").then(function(response) {
 					$scope.user = response.data;
-					console.log($scope.user);
 				}, function(rejection) {
-					console.log(rejection.data);
 				});
 			}
 			
@@ -183,6 +179,16 @@
 					$scope.getPosts();
 					$scope.post = "";
 				}, function(rejection) {
+				
+				});
+			}
+			
+			$scope.like = function(p) {
+				$http.put("/beepboop/posts/like", p).then(function(response) {
+					console.log(response.data);
+					$scope.getPosts();
+				}, function(rejection) {
+				
 				});
 			}
 			
@@ -227,14 +233,14 @@
 				</div>
 			</div>
 			<div class="column-two-b">
-				<div ng-repeat="p in posts">
-					<a href="/beepboop/{{p.threadId}}">
-					<img width="25" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png">
-					<p style="font-weight: 700; font-size: 18px;">@{{p.author}}</p>
+				<div style="padding: 10px;" ng-repeat="p in posts">
+					<a style="text-decoration: none; color: black" href="/beepboop/{{p.threadId}}">
+					<img style="display:inline-block" width="25" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png">
+					<p style="font-weight: 700; font-size: 18px; display:inline-block">@{{p.author}}</p>
 					<p>{{p.time.substring(0, 10)}} {{p.time.substring(11, 19)}}</p>
 					<p>{{p.content}}</p>
-					<button>Like</button>
 					</a>
+					<p style="display:inline-block; padding-right: 5px">{{p.numberOfLikes}}</p><button style="display:inline-block" ng-click="like(p)">Like</button>
 				</div>
 			</div>
 		</div>

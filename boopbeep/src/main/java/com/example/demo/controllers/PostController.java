@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,6 +42,19 @@ public class PostController {
 			posts.add(t.getPost());
 		}
 		return posts;
+	}
+	
+	@PutMapping (value = "/posts/like")
+	public ResponseEntity<?> likePost(@RequestBody Post post) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		for (Thread t : service.findAll()) {
+			if (t.getPost().getId().equals(post.getId())) {
+				t.addOrRemoveLike(username);
+				service.save(t);
+				return new ResponseEntity<String>(HttpStatus.OK);
+			}
+		}
+		return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 	}
 	
 	

@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -42,6 +41,10 @@ public class Thread extends Model {
 	
 	public Post getPost() {
 		return original;
+	}
+	
+	public void addOrRemoveLike(String username) {
+		original.addOrRemoveLike(username);
 	}
 
 }

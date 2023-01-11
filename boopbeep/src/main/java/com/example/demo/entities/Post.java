@@ -91,5 +91,14 @@ public class Post extends Model {
 	public String getThreadId() {
 		return threadId;
 	}
+	
+	public void addOrRemoveLike(String username) {
+		if (likes.contains(username)) {
+			likes.remove(username);
+		} else {
+			likes.add(username);
+		}
+		setNumberOfLikes();
+	}
 
 }
