@@ -134,11 +134,9 @@
 			}
 			.posts {
 				border-bottom: 1px solid gray;
-				width: 100%;
+				width: 98%;
+				padding: 1%;
 				text-align: left;
-			}
-			.posts:hover {
-				cursor:pointer;
 			}
 			textarea {
 				border: none;
@@ -180,6 +178,16 @@
 			p {
 				font-size: 20px;
 			}
+			.replies {
+				border-top: 1px solid grey;
+				border-bottom: 1px solid gray;
+				padding: 1%;
+				width: 98%;
+				text-align: left;
+			}
+			.reply-text {
+				font-size: 16px;
+			}
 		</style>
 	</head>
 	<body>
@@ -190,11 +198,21 @@
 			
 			app.controller("homeCtrl", function($scope, $http) {
 				$scope.post = {};
+				$scope.reply = "";
 				$scope.replies = [];
 			
-			$scope.like = function(p) {
-				$http.put("/beepboop/posts/like", p).then(function(response) {
-					$scope.getPosts();
+			$scope.like = function() {
+				$http.put("/beepboop/posts/like", $scope.post).then(function(response) {
+					$scope.getPost();
+				}, function(rejection) {
+				
+				});
+			}
+			
+			$scope.likeReply = function(r) {
+				let path = "/beepboop/threads/" + window.location.pathname.split("/").pop() + "/like";
+				$http.put(path, r).then(function(response) {
+					$scope.getReplies();
 				}, function(rejection) {
 				
 				});
@@ -208,7 +226,24 @@
 				});
 			}
 			
+			$scope.createReply = function() {
+				let path = "/beepboop/threads/" + window.location.pathname.split("/").pop();
+				$http.post(path, $scope.reply).then(function(response) {
+					$scope.getReplies();
+				}, function(rejection) {
+				});
+			}
+			
+			$scope.getReplies = function() {
+				let path = "/beepboop/threads/" + window.location.pathname.split("/").pop() + "/replies";
+				$http.get(path).then(function(response) {
+					$scope.replies = response.data;
+				}, function(rejection) {
+				});
+			}
+			
 			$scope.getPost();
+			$scope.getReplies();
 			
 			});
 		</script>
@@ -233,12 +268,24 @@
 					<p>{{post.content}}<p>
 					<div style="justify-content:space-evenly;">
 						<span style="display: inline-block">{{post.numberOfLikes}}<span>
-						<button>Like</button>
+						<button ng-click="like()">Like</button>
 						<span style="display: inline-block">{{post.time.substring(0, 10)}}</span>
 					</div>
 				</div>
-				<textarea placeholder="What are your thoughts?"></textarea>
-				<button class="submit">Reply</button>
+				<div>
+					<textarea ng-model="reply" placeholder="What are your thoughts?"></textarea>
+					<button ng-click="createReply()" class="submit">Reply</button>	
+					<hr style="border-top: 1px solid black">
+				</div>
+				<div style="float: right" ng-repeat="r in replies" class="replies">
+					<p class="reply-text">@{{r.author}}</p>
+					<p class="reply-text">{{r.content}}</p>
+					<div style="justify-content:space-evenly;">
+						<span class="reply-text" style="display: inline-block">{{r.numberOfLikes}}<span>
+						<button ng-click="likeReply(r)">Like</button>
+						<span style="display: inline-block">{{r.time.substring(0, 10)}}</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>

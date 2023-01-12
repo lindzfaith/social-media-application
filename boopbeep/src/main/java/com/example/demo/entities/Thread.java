@@ -47,8 +47,20 @@ public class Thread extends Model {
 		original.addOrRemoveLike(username);
 	}
 	
+	public void addOrRemoveReplyLike(Post post, String username) {
+		for (Post p : replies) {
+			if (p.getId().equals(post.getId())) {
+				p.addOrRemoveLike(username);
+			}
+		}
+	}
+	
 	public String getId() {
 		return this.id;
+	}
+	
+	public List<Post> getReplies() {
+		return this.replies;
 	}
 
 }

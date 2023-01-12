@@ -70,6 +70,45 @@ public class PostController {
 		return null;
 	}
 	
+	@PostMapping (value = "/threads/{id}")
+	public ResponseEntity<?> createReply(@PathVariable String id, @RequestBody String content) {
+		LocalDateTime date = LocalDateTime.now();
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Post post = new Post(username, content, date);
+		for (Thread t : service.findAll()) {
+			if (t.getId().equals(id)) {
+				t.addReply(post);
+				service.save(t);
+				return new ResponseEntity<String>(HttpStatus.OK);
+			}
+		}
+		return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+	}
 	
+	@GetMapping (value = "/threads/{id}/replies")
+	public List<Post> getThreadReplies(@PathVariable String id) {
+		for (Thread t : service.findAll()) {
+			if (t.getId().equals(id)) {
+				List<Post> replies = t.getReplies();
+				Collections.sort(replies);
+				Collections.reverse(replies);
+				return replies;
+			}
+		}
+		return null;
+	}
+	
+	@PutMapping (value = "/threads/{id}/like")
+	public ResponseEntity<?> likeReply(@PathVariable String id, @RequestBody Post post) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		for (Thread t : service.findAll()) {
+			if (t.getId().equals(id)) {
+				t.addOrRemoveReplyLike(post, username);
+				service.save(t);
+				return new ResponseEntity<String>(HttpStatus.OK);
+			}
+		}
+		return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+	}
 	
 }
