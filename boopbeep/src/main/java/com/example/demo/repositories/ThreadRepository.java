@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.demo.entities.Thread;
 
-public interface ThreadRepository extends JpaRepository<Thread, Long> {
+public interface ThreadRepository extends JpaRepository<Thread, String> {
 	
-	public Optional<Thread> findById ( Long id );
+	public Optional<Thread> findById ( String id );
 
 }

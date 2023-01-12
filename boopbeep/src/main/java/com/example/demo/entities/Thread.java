@@ -46,5 +46,9 @@ public class Thread extends Model {
 	public void addOrRemoveLike(String username) {
 		original.addOrRemoveLike(username);
 	}
+	
+	public String getId() {
+		return this.id;
+	}
 
 }

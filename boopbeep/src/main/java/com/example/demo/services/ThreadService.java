@@ -27,7 +27,7 @@ public class ThreadService<T extends Thread> extends Service<T, Long> {
 		return repo.findAll();
 	}
 	
-	public Thread findById(Long username) {
+	public Thread findById(String username) {
 		if (repo.findById(username) != null) {
 			return repo.findById(username).get();
 		}

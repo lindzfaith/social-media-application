@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +43,7 @@ public class PostController {
 		for (Thread t : service.findAll()) {
 			posts.add(t.getPost());
 		}
+		Collections.sort(posts);
 		return posts;
 	}
 	
@@ -55,6 +58,16 @@ public class PostController {
 			}
 		}
 		return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+	}
+	
+	@GetMapping (value = "/threads/{id}")
+	public Post getPost(@PathVariable String id) {
+		for (Thread t : service.findAll()) {
+			if (t.getId().equals(id)) {
+				return t.getPost();
+			}
+		}
+		return null;
 	}
 	
 	

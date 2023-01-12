@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +46,12 @@ public class UserController {
 	public User getAuthenticatedUser() {
 		User user = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		return user;
+	}
+	
+	@GetMapping (value = "/users/suggested")
+	public List<User> getUsers() {
+		List<User> users = userService.findAll();
+		return users;
 	}
 
 }

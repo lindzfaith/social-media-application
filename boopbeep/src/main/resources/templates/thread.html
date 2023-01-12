@@ -26,16 +26,9 @@
 				float: left;
 				position: fixed;
 				text-align: center;
-			}
-			.column-two-b {
-				left: 25%;
-				width: 40.7%;
-				height: 500px;
-				position: fixed;
-				overflow: scroll;
-				top: 213px;
-				left: 29.8%;
-				margin: 0 auto;
+				margin-top: 100px;
+				border: 1px solid black;
+				box-shadow: 1 rgb(0, 0, 0);
 			}
 			.login-header {
 				text-align: center;
@@ -140,12 +133,24 @@
   				100%   {color: rgb(0, 0, 0); transform: skewX(5deg)}
 			}
 			.posts {
-				border: 1px solid black;
 				border-bottom: 1px solid gray;
-				width: 99%;
+				width: 100%;
+				text-align: left;
 			}
 			.posts:hover {
 				cursor:pointer;
+			}
+			textarea {
+				border: none;
+				width: 99%;
+				text-align: left;
+				height:100px;
+				font-size: 20px;
+				float: left;
+				resize: none;
+			}
+			textarea:focus {
+				outline: none;
 			}
 			.header {
 				overflow: hidden; 
@@ -159,11 +164,21 @@
 				position: fixed;
 			}
 			.submit {
-				position: fixed;
-				top: 26.5%;
-				left: 67.3%;
 				font-weight: 700;
-				padding: 4px;
+				padding: 10px;
+				font-size: 20px;
+				width: 12%;
+				float: right;
+				border: 1px solid grey;
+				border-bottom: 0;
+				border-right: 0;
+				
+			}
+			.submit:hover {
+				cursor: pointer;
+			}
+			p {
+				font-size: 20px;
 			}
 		</style>
 	</head>
@@ -174,53 +189,26 @@
 			var app = angular.module("homeApp", []);
 			
 			app.controller("homeCtrl", function($scope, $http) {
-				$scope.posts = [];
-				$scope.user = {};
-				$scope.post = "";
-				$scope.users = [];
-			
-			$scope.getPosts = function() {
-				$http.get("/beepboop/posts").then(function(response) {
-					$scope.posts = response.data;
-				}, function(rejection) {
-				});
-			}
-			
-			$scope.getCurrentUser = function() {
-				$http.get("/beepboop/user").then(function(response) {
-					$scope.user = response.data;
-				}, function(rejection) {
-				});
-			}
-			
-			$scope.makePost = function() {
-				$http.post("/beepboop/posts", $scope.post).then(function(response) {
-					$scope.getPosts();
-					$scope.post = "";
-				}, function(rejection) {
-				
-				});
-			}
+				$scope.post = {};
+				$scope.replies = [];
 			
 			$scope.like = function(p) {
 				$http.put("/beepboop/posts/like", p).then(function(response) {
-					console.log(response.data);
 					$scope.getPosts();
 				}, function(rejection) {
 				
 				});
 			}
 			
-			$scope.getUsers = function() {
-				$http.get("/beepboop/users/suggested").then(function(response) {
-					$scope.users = response.data;
+			$scope.getPost = function() {
+				let path = "/beepboop/threads/" + window.location.pathname.split("/").pop();
+				$http.get(path).then(function(response) {
+					$scope.post = response.data;
 				}, function(rejection) {
 				});
 			}
 			
-			$scope.getUsers();
-			$scope.getCurrentUser();
-			$scope.getPosts();
+			$scope.getPost();
 			
 			});
 		</script>
@@ -239,45 +227,18 @@
 					<button class="sidebar-option" type="submit">Logout</button>
 				</form>
 			</div>
-			<br>
-			<div class="column-one" style="margin-left: 5%; margin-top: 70px; position: fixed">
-				<div style="border-radius: 30px; border: 1px solid rgb(79, 79, 79); width: 100%; padding: 5px;
-					background-color:rgb(250, 250, 250); display: fixed;">
-					<img width="150" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png">
-					<br>
-					<label>{{user.firstName}} {{user.lastName}}</label>
-					<p style="margin-top: 0px;">@{{user.username}}</p>
-					<p>0 following, 0 followers</p>
-					<h3>All Users</h3>
-					<div style="height: 170px; overflow: scroll">
-						<div style="border-top: 1px solid gray;" ng-repeat="u in users">
-							<p>{{u.firstName}} {{u.lastName}}</p>
-							<p>{{u.username}}</p>
-						</div>
+			<div class="column-two">
+				<div class="posts">
+					<p>@{{post.author}}<p>
+					<p>{{post.content}}<p>
+					<div style="justify-content:space-evenly;">
+						<span style="display: inline-block">{{post.numberOfLikes}}<span>
+						<button>Like</button>
+						<span style="display: inline-block">{{post.time.substring(0, 10)}}</span>
 					</div>
 				</div>
-			</div>
-			<div class="column-two" style="margin-top: 50px">
-				<h1 style="display: fixed; margin-bottom: 0">Activity Feed</h1>
-				<br>
-				<textarea ng-model="post" style="width: 80%; height: 80px; font-size: 20px; display: fixed" placeholder="What's on your mind?"></textarea>
-				<br>
-				<button class="submit" ng-click="makePost()">Post</button>
-			</div>
-			<div class="column-two-b">
-				<div class="posts" ng-repeat="p in posts">
-					<a style="text-decoration: none; color: black" href="/beepboop/thread/{{p.threadId}}">
-					<img style="display:inline-block" width="25" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png">
-					<p style="font-weight: 700; font-size: 18px; display:inline-block">@{{p.author}}</p>
-					<p style="margin: 0">{{p.content}}</p>
-					<p style="display:inline-block">{{p.time.substring(0, 10)}} {{p.time.substring(11, 19)}}</p>
-					</a>
-					<p style="display:inline-block; padding-left:280px; padding-right: 5px">{{p.numberOfLikes}}</p><button style="display:inline-block" ng-click="like(p)">Like</button>
-				</div>
-			</div>
-			<div name="search-bar" style="position: fixed; top: 11%; right: 2%;">
-				<input>
-				<button style="font-size: 20px;"><i class="fa fa-search"></i></button>
+				<textarea placeholder="What are your thoughts?"></textarea>
+				<button class="submit">Reply</button>
 			</div>
 		</div>
 	</body>

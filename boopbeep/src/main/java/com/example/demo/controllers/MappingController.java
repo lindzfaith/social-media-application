@@ -14,6 +14,11 @@ public class MappingController {
 		return new ModelAndView("login");
 	}
 	
+	@GetMapping (value = {"/thread/{id}"})
+	public ModelAndView thread(String id) {
+		return new ModelAndView("thread");
+	}
+	
 	@GetMapping (value = {"/home", "home"})
 	public ModelAndView home() {
 		return new ModelAndView("home");

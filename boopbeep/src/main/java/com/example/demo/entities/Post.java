@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class Post extends Model {
+public class Post extends Model implements Comparable<Post> {
 	
 	@Id
 	String id;
@@ -99,6 +99,11 @@ public class Post extends Model {
 			likes.add(username);
 		}
 		setNumberOfLikes();
+	}
+
+	@Override
+	public int compareTo(Post o) {
+		return o.getTime().compareTo(time);
 	}
 
 }
